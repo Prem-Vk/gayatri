@@ -1,0 +1,112 @@
+{% extends "main/home.html" %}
+{% load static %}
+{% load cloudinary %}
+
+{% block main_body %}
+
+
+<h1 class="mb-4 text-3xl font-extrabold text-gray-900 dark:text-white md:text-5xl lg:text-6xl px-8 py-1"><span class="text-transparent bg-clip-text bg-gradient-to-r to-emerald-600 from-sky-400">Popular</span> Products</h1>
+<p class="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 px-8">"Find below some  of our most popular Product Ranges"</p>
+<hr class="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700">
+<div class="flex gap-12 max-w-8xl font-[sans-serif]">
+    <ul class="min-w-[230px] bg-gray-100 inline-block py-5">
+        {% for category in all_categories %}
+            {% with ctitle=category.title|cut:' '|cut:'&'|cut:','%}
+                <a id="{{ ctitle|add:'Tab' }}"
+                    class="tab flex items-center text-sm text-gray-800 hover:text-blue-600 py-5 px-5 cursor-pointer transition-all"
+                    hx-get={% url "category" category.pk %} hx-target="#{{ ctitle|add:'Content' }}">
+                    {{ category.title }}
+                </a>
+            {% endwith %}
+        {% endfor %}
+        <a id="AllProductsTab"
+            class="tab flex items-center text-sm font-semibold bg-white text-blue-600 hover:text-blue-600 py-5 px-5 cursor-pointer transition-all"
+            hx-get={% url "category" 0 %} hx-target="#AllProductsContent">
+            All Products
+        </a>
+        {% if search_for %}
+        <a id="SearchTab"
+            class="tab flex items-center text-sm font-semibold bg-white text-blue-600 hover:text-blue-600 py-5 px-5 cursor-pointer transition-all">
+            Results For: {{ search_for }}
+        </a>
+        {% endif %}
+    </ul>
+
+    <div>
+        {% for category in all_categories %}
+            {% with ctitle=category.title|cut:' '|cut:'&'|cut:','|add:'Content' %}
+                <div id="{{ ctitle }}" class="tab-content max-w-8xl hidden mt-2"></div>
+            {% endwith %}
+        {% endfor %}
+        <div id="AllProductsContent" class="tab-content max-w-8xl block mt-8"></div>
+        <div id="SearchContent" class="tab-content max-w-8xl block mt-8">
+            {% if search_for %}
+                <h1 class="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Search Results for: <mark class="px-2 text-white bg-blue-600 rounded dark:bg-blue-500">{{ search_for }}</mark></h1>
+                <div class="font-sans w-full">
+                    <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:p-2 xl:p-5">
+                        {% for product in products %}
+                        <!-- card  -->
+                            <div
+                                class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
+                                <div class="p-2 flex justify-center">
+                                    <a href="#">
+                                        {% cloudinary product.image quality='auto' class="rounded-md" loading="lazy" width=600 height=400 crop='pad' background='white' %}
+                                    </a>
+                                </div>
+                                <h1>
+                
+                                <div class="px-4 pb-3">
+                                    <div>
+                                        <a href="#">
+                                            <h5
+                                                class="text-xl font-semibold tracking-tight hover:text-violet-800 dark:hover:text-violet-300 text-gray-900 dark:text-white ">
+                                                {{ product.name }}
+                                            </h5>
+                                        </a>
+                                    </div>
+                                </div>
+                
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let tabs = document.querySelectorAll('.tab');
+        let contents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(function (tab) {
+            tab.addEventListener('click', function (e) {
+                let targetId = tab.id.replace('Tab', 'Content');
+
+                // Hide all content divs
+                contents.forEach(function (content) {
+                    content.classList.add('hidden');
+                });
+
+                // Remove active class from all tabs
+                tabs.forEach(function (tab) {
+                    tab.classList.remove('font-semibold', 'text-blue-600', 'bg-white');
+                    tab.classList.add('text-gray-800');
+                });
+
+                // Show the target content
+                document.getElementById(targetId).classList.remove('hidden');
+
+                // Add active class to the clicked tab
+                tab.classList.add('font-semibold', 'text-blue-600', 'bg-white');
+                tab.classList.remove('text-gray-800');
+            });
+        });
+        {% if div_id %}
+            document.getElementById("{{ div_id }}").click();
+        {% endif %}
+    });
+</script>
+</script>
+{% endblock main_body %}

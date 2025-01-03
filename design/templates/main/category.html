@@ -1,0 +1,32 @@
+{% load cloudinary %}
+{% if search_for %}
+    <h1>Search results for:- {{ search_for }}</h1>
+{% endif %}
+<div class="font-sans w-full">
+    <div class="grid gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 md:p-2 xl:p-5">
+        {% for product in products %}
+        <!-- card  -->
+            <div
+                class="relative bg-white border rounded-lg shadow-md dark:bg-gray-800 dark:border-gray-700 transform transition duration-500 hover:scale-105">
+                <div class="p-2 flex justify-center">
+                    <a href="#">
+                        {% cloudinary product.image quality='auto' class="rounded-md" loading="lazy" width=600 height=400 crop='pad' background='white' %}
+                    </a>
+                </div>
+                <h1>
+
+                <div class="px-4 pb-3">
+                    <div>
+                        <a href="#">
+                            <h5
+                                class="text-xl font-semibold tracking-tight hover:text-violet-800 dark:hover:text-violet-300 text-gray-900 dark:text-white ">
+                                {{ product.name }}
+                            </h5>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        {% endfor %}
+    </div>
+  </div>

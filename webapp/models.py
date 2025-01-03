@@ -1,7 +1,17 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 from cloudinary.models import CloudinaryField
 
+
+
+class Catergory(models.Model):
+    title = models.CharField(max_length=200, unique=True)
+    image = CloudinaryField('category_image', null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = 'Categories'
+
+    def __str__(self):
+        return f'<{self.pk} - {self.title}>'
 
 
 class Product(models.Model):
@@ -45,8 +55,19 @@ class Product(models.Model):
     ]
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField()
-    details = ArrayField(models.CharField(max_length=512), default=list)
+    details = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
-    category = models.CharField(choices=CATEGORIES, max_length=2, null=True, blank=True)
+    category = models.ForeignKey(Catergory, on_delete=models.PROTECT, null=True, blank=True)
     image = CloudinaryField('product_image')
+
+    def __str__(self):
+        return f'<{self.pk}-{self.name}'
+
+
+class Client(models.Model):
+    name = models.CharField(max_length=200)
+    contact = models.CharField(max_length=200)
+    subject = models.TextField(null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
+    admin_comment = models.TextField(null=True, blank=True)
