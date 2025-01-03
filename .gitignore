@@ -68,7 +68,10 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+package.json
+package-lock.json
 
+tailwind.config.js
 # Translations
 *.mo
 
