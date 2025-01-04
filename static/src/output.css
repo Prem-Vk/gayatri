@@ -2737,3 +2737,12 @@ input:checked + .toggle-bg {
 .rtl\:space-x-reverse:where([dir="rtl"], [dir="rtl"] *) > :not([hidden]) ~ :not([hidden]) {
   --tw-space-x-reverse: 1;
 }
+
+@media screen and (max-width: 621px) {
+  .min-w-\[230px\] {
+    min-width: 40%;
+  }
+  .gap-12 {
+    gap: 1rem;
+  }
+}

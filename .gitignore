@@ -70,7 +70,6 @@ coverage.xml
 cover/
 package.json
 package-lock.json
-
 tailwind.config.js
 # Translations
 *.mo

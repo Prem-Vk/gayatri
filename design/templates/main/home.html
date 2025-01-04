@@ -56,7 +56,7 @@
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5v10M3 5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm12 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4Zm0 0V6a3 3 0 0 0-3-3H9m1.5-2-2 2 2 2"/>
                         </svg>
                     </div>
-                    <input name="search_for" type="text" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search branch name..." required />
+                    <input name="search_for" type="text" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search product name..." required />
                 </div>
                 <button type="submit" class="p-2.5 ms-2 text-sm font-medium text-white bg-blue-700 rounded-lg border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                     <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -120,10 +120,7 @@
                     </div>
                 </li>
                 <li>
-                    <a href="javascript:void(0)" class="block py-2 px-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-600 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-blue-500 md:dark:hover:bg-transparent dark:border-gray-700">Team</a>
-                </li>
-                <li>
-                    <a href="javascript:void(0)" class="block py-2 px-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-600 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-blue-500 md:dark:hover:bg-transparent dark:border-gray-700">Contact</a>
+                    <a href="javascript:void(0)" onclick="smoothScroll(document.getElementById('cfooter'))" class="block py-2 px-3 text-gray-900 border-b border-gray-100 hover:bg-gray-50 md:hover:bg-transparent md:border-0 md:hover:text-blue-600 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-blue-500 md:dark:hover:bg-transparent dark:border-gray-700">Contact</a>
                 </li>
             </ul>
         </div>
@@ -278,7 +275,7 @@
 
                 <div class="px-4 pb-3">
                     <div>
-                        <a href="#">
+                        <a href="{% url 'product' category.pk %}">
                             <h5
                                 class="text-xl font-semibold tracking-tight hover:text-violet-800 dark:hover:text-violet-300 text-gray-900 dark:text-white ">
                                 {{ category.title }}
@@ -428,7 +425,7 @@
 {% endblock main_body %}
 <!-- footer -->
 {% block footer %}
-  <footer class="bg-gray-800 py-8 px-8 font-[sans-serif] tracking-wide mt-16">
+  <footer class="bg-gray-800 py-8 px-8 font-[sans-serif] tracking-wide mt-16" id="cfooter">
     <div class="relative max-w-screen-xl mx-auto">
       <div class="bg-blue-600 gap-3 rounded-md flex flex-wrap items-center justify-between sm:px-8 max-sm:px-4 py-4 absolute top-[-66px] w-full">
         <h6 class="text-white sm:text-xl max-sm:text-base font-semibold">Gayatri Enterprise</h6>
@@ -453,10 +450,10 @@
         <div>
           <h4 class="text-lg font-semibold mb-6 text-gray-200">Contact Us</h4>
           <ul class="space-y-4">
-            <li class="text-gray-400 text-base">Shop no.3, near aamantran hotel</li>
-            <li class="text-gray-400 text-base">Vijay nagar, Palghar, Mumbai-401209</li>
+            <li class="text-gray-400 text-base">Shop no.3, Near Aamantran Hotel</li>
+            <li class="text-gray-400 text-base">Vijay nagar, Vasai-Virar, Mumbai-401209</li>
             <li class="text-gray-400 text-base">sales@gayatrienterprise.co.in</li>
-            <li class="text-gray-400 text-base">+91 9637189578/ +91 7517559934</li>
+            <li class="text-gray-400 text-base">+91 7517559934</li>
           </ul>
         </div>
 
