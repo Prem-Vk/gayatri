@@ -103,7 +103,7 @@ WSGI_APPLICATION = 'gayatri_ecommerce.wsgi.application'
 DATABASES = {
     'default': dj_database_url.parse(
         config('DATABASE_URL'),
-        conn_max_age=600,
+        conn_max_age=20,
         conn_health_checks=True,
     )
 }
@@ -165,3 +165,20 @@ cloudinary.config(
     api_key = config('API_KEY'),
     api_secret = config('API_SECRET'),
 )
+
+EMAIL_RATELIMIT = config('EMAIL_RATELIMIT', cast=str)
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': config('REDIS_URL'),
+        'KEY_PREFIX': 'gayatri',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            'CONNECTION_POOL_KWARGS': {
+                'max_connections': 100,
+                'retry_on_timeout': True,
+            }
+        }
+    }
+}

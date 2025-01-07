@@ -5,7 +5,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.forms import ModelForm
 from django.core.mail import EmailMultiAlternatives
-from django.urls import reverse
+from django_ratelimit.decorators import ratelimit
 
 def get_header_categories():
     cl = settings.CATEGORY_COLUMN_LENGTH
@@ -86,6 +86,7 @@ def acknowledge_mail(instance: Client):
     Gayatri Enetrprise.'''.format(name=instance.name, contact=instance.contact)
     return message
 
+@ratelimit(key='ip', rate=settings.EMAIL_RATELIMIT)
 def add_client(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
