@@ -3,7 +3,7 @@ from django.views.generic import View
 from webapp.models import Product, Catergory, Client
 from django.conf import settings
 from django.template.loader import render_to_string
-from django.forms import ModelForm
+from django.forms import ModelForm, forms
 from django.core.mail import EmailMultiAlternatives
 from django_ratelimit.decorators import ratelimit
 
@@ -72,6 +72,12 @@ class ClientForm(ModelForm):
     class Meta:
         model = Client
         fields = '__all__'
+
+    def clean(self):
+        super().clean()
+        contact = self.cleaned_data.get('contact')
+        if Client.objects.filter(contact=str(contact).strip()).exists():
+            raise forms.ValidationError("Contact already exists!!")
 
 def acknowledge_mail(instance: Client):
     message ='''Hi {name},
