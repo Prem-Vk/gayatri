@@ -199,6 +199,12 @@
                 </h2>
                 <form class="mt-8 space-y-6" method="POST", action='{% url "add_client" %}'>
                   {% csrf_token %}
+                  <!-- Anti-bot honeypot and time-trap (invisible to humans) -->
+                  <div style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
+                      <label for="website_hp_1">Leave blank</label>
+                      <input type="text" name="website" id="website_hp_1" tabindex="-1" autocomplete="off" value="">
+                      <input type="hidden" name="form_time" class="js-form-time" value="">
+                  </div>
                     <div>
                         <label for="text" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Your Name</label>
                         <input type="text" name="name" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@company.com" required />
@@ -408,6 +414,12 @@
 
         <form class="ml-auo space-y-4" method="POST", action='{% url "add_client" %}'>
           {% csrf_token %}
+          <!-- Anti-bot honeypot and time-trap (invisible to humans) -->
+          <div style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;" aria-hidden="true">
+              <label for="website_hp_2">Leave blank</label>
+              <input type="text" name="website" id="website_hp_2" tabindex="-1" autocomplete="off" value="">
+              <input type="hidden" name="form_time" class="js-form-time" value="">
+          </div>
             <input type='text' placeholder='Name' name="name"
                 class="w-full text-gray-800 rounded-md py-2.5 px-4 border text-sm outline-blue-500" required/>
             <input type='text' placeholder='Email/Phone' name="contact"
@@ -536,6 +548,14 @@
         // start scrolling
         scroll(scrollContainer, scrollContainer.scrollTop, targetY, 0);
     }
+    </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var now = (Date.now() / 1000).toFixed(2);
+        document.querySelectorAll(".js-form-time").forEach(function(el) {
+            el.value = now;
+        });
+    });
     </script>
 </body>
 

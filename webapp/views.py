@@ -1,3 +1,4 @@
+import time
 from django.shortcuts import render, HttpResponse
 from django.views.generic import View
 from webapp.models import Product, Catergory, Client
@@ -95,14 +96,39 @@ def acknowledge_mail(instance: Client):
 @ratelimit(key='ip', rate=settings.EMAIL_RATELIMIT)
 def add_client(request):
     if request.method == 'POST':
+        template = "main/home.html"
+        ctx = {'show_message': True}
+        ctx.update(get_header_categories())
+
+        # 1. Honeypot check: Hidden field filled by bots, left empty by humans
+        honeypot = request.POST.get('website', '').strip()
+        if honeypot:
+            # Bot detected: pretend success without saving or sending emails
+            return render(request, template, ctx)
+
+        # 2. Time-trap check: Forms submitted faster than 2.0s are automated bots
+        form_time = request.POST.get('form_time', '').strip()
+        if form_time:
+            try:
+                elapsed = time.time() - float(form_time)
+                if elapsed < 2.0:
+                    # Bot submitted too quickly
+                    return render(request, template, ctx)
+            except (ValueError, TypeError):
+                pass
+
+        # 3. Human submission: validate and save
         form = ClientForm(request.POST)
         if form.is_valid():
             instance: Client = form.save()
 
             if '@' in instance.contact and '.' in instance.contact:
-                EmailMultiAlternatives('Gayatri enterpise - Acknowledgement mail', f'{acknowledge_mail(instance)}', settings.EMAIL_HOST_USER, [f'{instance.contact}'],[settings.EMAIL_HOST_USER]).send()
+                EmailMultiAlternatives(
+                    'Gayatri enterpise - Acknowledgement mail',
+                    f'{acknowledge_mail(instance)}',
+                    settings.EMAIL_HOST_USER,
+                    [f'{instance.contact}'],
+                    [settings.EMAIL_HOST_USER]
+                ).send()
 
-        template = "main/home.html"
-        ctx = {'show_message': True}
-        ctx.update(get_header_categories())
         return render(request, template, ctx)
