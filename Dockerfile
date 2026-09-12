@@ -75,7 +75,7 @@ COPY --chown=appuser:appgroup . /app
 RUN chmod +x /app/entrypoint.sh && \
     mkdir -p /app/staticfiles /app/media && \
     python manage.py collectstatic --noinput && \
-    chown -R appuser:appgroup /app/staticfiles /app/media
+    chown -R appuser:appgroup /app
 
 # Switch to non-root user
 USER appuser
