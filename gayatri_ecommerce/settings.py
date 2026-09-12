@@ -26,23 +26,35 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
-CATEGORY_COLUMN_LENGTH = config('CATEGORY_COLUMN_LENGTH', cast=int)
+SECRET_KEY = config('SECRET_KEY', default='django-insecure-gayatri-production-key-change-me')
+CATEGORY_COLUMN_LENGTH = config('CATEGORY_COLUMN_LENGTH', default=6, cast=int)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", cast=bool)
+DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*']
-# CSRF_TRUSTED_ORIGINS = ['https://7582b80ff09302.lhr.life']
+ALLOWED_HOSTS = config(
+    'ALLOWED_HOSTS',
+    default='*',
+    cast=lambda v: [s.strip() for s in v.split(',') if s.strip()]
+)
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='https://*.northflank.app',
+    cast=lambda v: [s.strip() for s in v.split(',') if s.strip()]
+)
+
+# Honor X-Forwarded-Proto header from Northflank / reverse proxy TLS termination
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-STATIC_ROOT = BASE_DIR / 'static'
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [BASE_DIR / 'static',]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Django-compressor settings
-COMPRESS_ROOT = BASE_DIR / 'static'
+COMPRESS_ROOT = BASE_DIR / 'staticfiles'
 COMPRESS_ENABLED = True
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -51,7 +63,6 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -100,9 +111,14 @@ WSGI_APPLICATION = 'gayatri_ecommerce.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+DATABASE_URL = config(
+    'DATABASE_URL',
+    default=config('POSTGRES_URI', default='sqlite:///' + str(BASE_DIR / 'db.sqlite3'))
+)
+
 DATABASES = {
     'default': dj_database_url.parse(
-        config('DATABASE_URL'),
+        DATABASE_URL,
         conn_max_age=20,
         conn_health_checks=True,
     )
@@ -129,11 +145,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Email settings
 
-EMAIL_HOST = config('EMAIL_HOST')
-EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = config('EMAIL_PORT', cast=int)
-EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.gmail.com')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+EMAIL_PORT = config('EMAIL_PORT', default=587, cast=int)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=True, cast=bool)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 
@@ -161,24 +177,34 @@ USE_TZ = True
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 cloudinary.config(
-    cloud_name = config('CLOUD_NAME'),
-    api_key = config('API_KEY'),
-    api_secret = config('API_SECRET'),
+    cloud_name=config('CLOUD_NAME', default=''),
+    api_key=config('API_KEY', default=''),
+    api_secret=config('API_SECRET', default=''),
 )
 
-EMAIL_RATELIMIT = config('EMAIL_RATELIMIT', cast=str)
+EMAIL_RATELIMIT = config('EMAIL_RATELIMIT', default='5/m', cast=str)
 
-CACHES = {
-    'default': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': config('REDIS_URL'),
-        'KEY_PREFIX': 'gayatri',
-        'OPTIONS': {
-            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-            'CONNECTION_POOL_KWARGS': {
-                'max_connections': 100,
-                'retry_on_timeout': True,
+REDIS_URL = config('REDIS_URL', default=config('REDIS_URI', default=''))
+
+if REDIS_URL:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': REDIS_URL,
+            'KEY_PREFIX': 'gayatri',
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+                'CONNECTION_POOL_KWARGS': {
+                    'max_connections': 100,
+                    'retry_on_timeout': True,
+                }
             }
         }
     }
-}
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            'LOCATION': 'gayatri-locmem',
+        }
+    }
